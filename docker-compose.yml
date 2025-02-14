@@ -16,22 +16,22 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
-    build: .
-    container_name: todo-nestjs
-    restart: always
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - .env
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
-    command: ["sh", "-c", "npm run start:dev"]
+  # app:
+  #   build: .
+  #   container_name: todo-nestjs
+  #   restart: always
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - .:/app
+  #     - node_modules:/app/node_modules
+  #   command: ["sh", "-c", "npm run start:dev"]
 
 volumes:
   pg_data:
-  node_modules:
+  # node_modules:
