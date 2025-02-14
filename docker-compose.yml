@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    image: postgres:latest
+    image: postgres
     container_name: todo-postgresql
     restart: always
     env_file:
