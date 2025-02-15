@@ -40,4 +40,14 @@ export class TodoRepository{
         }
         return result.rows[0]
     }
+
+    async deleteTodo(id:number): Promise<void>{
+        const result = await this.databaseService.query(`
+            DELETE FROM todos WHERE id = $1
+        `, [id]);
+        if(result.rowCount==0){
+            this.logger.error('Todo not found')
+            throw new NotFoundException('Todo not found')
+        }
+    }
 }
