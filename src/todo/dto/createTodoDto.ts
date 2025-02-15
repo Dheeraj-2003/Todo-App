@@ -1,4 +1,4 @@
-import { IsNotEmpty, Length } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, Length } from "class-validator";
 import { Todo } from "../todo.interface";
 
 export class CreateTodoDto implements Todo{
@@ -8,8 +8,13 @@ export class CreateTodoDto implements Todo{
     @Length(1,255)
     title: string;
 
+    @IsOptional()
+    @IsBoolean()
     completed:boolean
 
-    description?: string;
+    @IsOptional()
+    @Length(1,255)
+    description: string;
+
     created_at: Date;
 }

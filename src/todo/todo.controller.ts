@@ -1,7 +1,8 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, ParseIntPipe, Patch, Post, UsePipes, ValidationPipe } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import { Todo } from "./todo.interface";
 import { CreateTodoDto } from "./dto/createTodoDto";
+import { UpdateTodoDto } from "./dto/updateTodoDto";
 
 @Controller('todo')
 export class TodoController{
@@ -12,22 +13,17 @@ export class TodoController{
 
     @Get()
     async getAllTodos(): Promise<Todo[]>{
-        try {
-            return await this.todoService.getTodos();
-        } catch (error) {
-            this.logger.error('Error fetching todos', error);
-            throw new HttpException('Failed to retrieve todos', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.todoService.getTodos();
     }
 
     @Post('/create')
     @UsePipes(ValidationPipe)
     async createTodo(@Body() todoData:CreateTodoDto): Promise<Todo>{
-        try {
-            return await this.todoService.addTodo(<Todo> {title: todoData.title, completed: todoData.completed})
-        } catch (error) {
-            this.logger.error('Error creating todo', error);
-            throw new HttpException('Failed to create todo', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return await this.todoService.addTodo(todoData)
+    }
+
+    @Patch(':id')
+    async updateTodo(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe({ whitelist: true })) updates:UpdateTodoDto): Promise<Todo>{
+        return await this.todoService.updateTodo(id, updates)
     }
 }

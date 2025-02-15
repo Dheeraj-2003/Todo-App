@@ -2,6 +2,8 @@ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { TodoRepository } from "./todo.repository";
 import { Todo } from "./todo.interface";
 import { todo } from "node:test";
+import { UpdateTodoDto } from "./dto/updateTodoDto";
+import { CreateTodoDto } from "./dto/createTodoDto";
 
 @Injectable()
 export class TodoService{
@@ -9,21 +11,12 @@ export class TodoService{
     constructor(private readonly todoRepository: TodoRepository){}
 
     async getTodos(): Promise<Todo[]>{
-        try {
-            return await this.todoRepository.getTodos()
-        } catch (error) {
-            this.logger.error('Failed to retrieve todos', error)
-            throw new Error('Failed to retrieve todos')
-        }
+        return await this.todoRepository.getTodos()
     }
-    async addTodo(todo: Todo): Promise<Todo>{
-
-        try{
-            return await this.todoRepository.addTodo(todo)
-        }
-        catch(error){
-            this.logger.error('Failed to retrieve todos', error)
-            throw new Error('Failed to retrieve todos')
-        }
+    async addTodo(todo: CreateTodoDto): Promise<Todo>{
+        return await this.todoRepository.addTodo(todo)
+    }
+    async updateTodo(id:number, updates: UpdateTodoDto): Promise<Todo>{
+        return await this.todoRepository.updateTodo(id,updates)
     }
 }
