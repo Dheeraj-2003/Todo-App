@@ -1,7 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "src/database/database.service";
 import { Todo } from "./todo.interface";
-import { error } from "console";
 import { UpdateTodoDto } from "./dto/updateTodoDto";
 import { CreateTodoDto } from "./dto/createTodoDto";
 

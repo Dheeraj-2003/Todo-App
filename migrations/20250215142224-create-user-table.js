@@ -14,22 +14,21 @@ exports.setup = function(options, seedLink) {
   seed = seedLink;
 };
 
-exports.up = function(db) {
-  return db.runSql(`
-    CREATE TABLE todos (
+exports.up = function (db) {
+  const query = `
+    CREATE TABLE users (
       id SERIAL PRIMARY KEY,
-      title TEXT NOT NULL,
-      description TEXT,
-      completed BOOLEAN DEFAULT FALSE,
+      username VARCHAR(50) NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      password TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
-  `);
+  `;
+  return db.runSql(query);
 };
 
-exports.down = function(db) {
-  return db.runSql(`
-      DROP TABLE IF EXISTS todos;
-    `);
+exports.down = function (db) {
+  return db.runSql('DROP TABLE IF EXISTS users;');
 };
 
 exports._meta = {
