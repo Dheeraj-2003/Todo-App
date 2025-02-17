@@ -2,16 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { TodoRepository } from "./todo.repository";
 import { UpdateTodoDto } from "./dto/updateTodoDto";
 import { CreateTodoDto } from "./dto/createTodoDto";
-
-export interface Todo {
-    id: number;
-    title: string;
-    description?: string;
-    completed: boolean;
-    created_at: Date;
-    user_id:number;
-  }
-  
+import { Todo } from "./todo.interface";
 
 @Injectable()
 export class TodoService{
