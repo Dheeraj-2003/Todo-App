@@ -18,6 +18,7 @@ exports.up = function(db) {
   return db.runSql(`
     CREATE TABLE todos (
       id SERIAL PRIMARY KEY,
+      user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       title TEXT NOT NULL,
       description TEXT,
       completed BOOLEAN DEFAULT FALSE,

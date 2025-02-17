@@ -17,4 +17,6 @@ export class CreateTodoDto implements Todo{
     description: string;
 
     created_at: Date;
+
+    user_id: number;
 }

@@ -2,21 +2,20 @@ import { Injectable, InternalServerErrorException, Logger, NotFoundException } f
 import { DatabaseService } from "src/database/database.service";
 import { Todo } from "./todo.interface";
 import { UpdateTodoDto } from "./dto/updateTodoDto";
-import { CreateTodoDto } from "./dto/createTodoDto";
 
 @Injectable()
 export class TodoRepository{
     private readonly logger = new Logger(TodoRepository.name);
     constructor(private readonly databaseService: DatabaseService){}
 
-    async getTodos(): Promise<Todo[]> {
+    async getTodos(userId:number): Promise<Todo[]> {
         const result = await this.databaseService.query(`
-            SELECT * FROM todos ORDER BY created_at DESC
-        `);
+            SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC
+        `, [userId]);
         return result.rows
     }
 
-    async addTodo(todo: CreateTodoDto): Promise<Todo> {
+    async addTodo(todo: Todo): Promise<Todo> {
         const columns = Object.keys(todo)
         const values = Object.values(todo)
         const placeHolders = Object.values(todo).map((val,i)=> `$${i+1}`)
@@ -26,12 +25,15 @@ export class TodoRepository{
         return result.rows[0]
     }
 
-    async updateTodo(id:number,updates: UpdateTodoDto): Promise<Todo> {
+    async updateTodo(userId:number,id:number,updates: UpdateTodoDto): Promise<Todo> {
         const columns = Object.keys(updates).map((column,i)=> `${column} = $${i+1}`)
         const values = Object.values(updates)
-        values.push(id)
+        values.push(id, userId)
         const result = await this.databaseService.query(`
-            UPDATE todos SET ${columns.join(', ')} WHERE id = $${values.length} RETURNING *
+            UPDATE todos 
+            SET ${columns.join(', ')} 
+            WHERE id = $${values.length-1} AND user_id = $${values.length} 
+            RETURNING *
         `, values)
         if(result.rowCount==0){
             this.logger.error('Todo not found')
@@ -40,10 +42,11 @@ export class TodoRepository{
         return result.rows[0]
     }
 
-    async deleteTodo(id:number): Promise<void>{
+    async deleteTodo(userId:number,id:number): Promise<void>{
         const result = await this.databaseService.query(`
-            DELETE FROM todos WHERE id = $1
-        `, [id]);
+            DELETE FROM todos 
+            WHERE id = $1 AND user_id = $2
+        `, [id,userId]);
         if(result.rowCount==0){
             this.logger.error('Todo not found')
             throw new NotFoundException('Todo not found')
