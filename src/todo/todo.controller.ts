@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, Request, Logger, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Request, Logger, Param, ParseIntPipe, Patch, Post, UseGuards, UsePipes, ValidationPipe, Query } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import { Todo } from "./todo.interface";
 import { CreateTodoDto } from "./dto/createTodoDto";
 import { UpdateTodoDto } from "./dto/updateTodoDto";
 import { JwtAuthGuard } from "src/auth/jwtAuth.guard";
+import { PaginationDto } from "./dto/paginationDto";
 
 @Controller('todo')
 @UseGuards(JwtAuthGuard)
@@ -14,14 +15,13 @@ export class TodoController{
     ){}
 
     @Get()
-    async getAllTodos(@Request() req): Promise<Todo[]>{
-        return await this.todoService.getTodos(req.user.id);
+    async getPaginatedTodos(@Request() req,@Query() paginationDto:PaginationDto): Promise<Todo[]>{
+        return await this.todoService.getPaginatedTodos(req.user.id, paginationDto);
     }
 
     @Post('/create')
     @UsePipes(ValidationPipe)
     async createTodo(@Request() req, @Body() todoData:CreateTodoDto): Promise<Todo>{
-        console.log(req.user)
         return await this.todoService.addTodo(req.user.id,todoData)
     }
 

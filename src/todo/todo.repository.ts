@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, Logger, NotFoundException } f
 import { DatabaseService } from "src/database/database.service";
 import { Todo } from "./todo.interface";
 import { UpdateTodoDto } from "./dto/updateTodoDto";
+import { PaginationDto } from "./dto/paginationDto";
 
 @Injectable()
 export class TodoRepository{
@@ -12,6 +13,18 @@ export class TodoRepository{
         const result = await this.databaseService.query(`
             SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC
         `, [userId]);
+        return result.rows
+    }
+
+    async getPaginatedTodos(userId:number, paginationDto: PaginationDto): Promise<Todo[]> {
+        var {page = 1, limit = 10} = paginationDto
+        const offset = (page - 1) * limit
+        const result = await this.databaseService.query(`
+            SELECT * FROM todos 
+            WHERE user_id = $1 
+            ORDER BY created_at DESC
+            LIMIT $2 OFFSET $3
+        `, [userId, limit, offset]);
         return result.rows
     }
 
